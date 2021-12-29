@@ -1,9 +1,15 @@
 class ShapeCollector<T : Shape> {
     private val allShapes = mutableListOf<T>()
 
-    fun add(new: T) /* ??? */ {}
-    fun addAll(new: List<T> ) /* ??? */ {}
+    fun add(new: T) {
+        allShapes.add(new)
+    }
 
-    fun getAll(): List<T> { return mutableListOf() }
-    fun getAllSorted(comparator: ShapeComparators): List<T> /* ??? */ { return mutableListOf() }
+    fun addAll(new: List<T>) {
+        allShapes.addAll(new)
+    }
+
+    fun getAll(): List<T> = allShapes
+
+    fun getAllSorted(comparator: Comparator<in T>): List<T> = allShapes.sortedWith(comparator)
 }
