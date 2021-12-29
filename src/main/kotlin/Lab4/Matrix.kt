@@ -1,196 +1,147 @@
-enum class Operations{
-    ADD,
-    MINUS,
-    MULTIPLY,
-    DIVIDE
-}
+package lab4
 
-class Matrix (
-    initialArray: Array<Array<Int>>
-) {
-    private var data: Array<Array<Int>> = emptyArray()
-    private var size1: Int = 0
-    private var size2: Int = 0
+class Matrix(matrixContents: Array<Array<Double>>) {
+    private var matrix: Array<Array<Double>>
 
     init {
-        if (initialArray.isEmpty())
-            error("Matrix is empty.")
-        if (initialArray[0].isEmpty())
-            error("Matrix is empty")
-
-        size1 = initialArray.size
-        size2 = initialArray[0].size
-
-        data = Array(size1) {
-                i ->
-            if (size2 != initialArray[i].size)
-                error("Matrix has incorrect size.")
-            initialArray[i].copyOf()
+        val length = matrixContents[0].size
+        matrix = Array(matrixContents.size) { i ->
+            if (matrixContents[i].size != length) throw IllegalArgumentException("Matrix is wrong-sized")
+            matrixContents[i].clone()
         }
     }
 
-    // copy function
-    fun setMatrix(other: Matrix) {
-        if (other.getSize().first == 0 || other.getSize().second == 0)
-            error("Matrix is empty.")
-
-        size1 = other.getSize().first
-        size2 = other.getSize().second
-
-        data = Array(size1) {
-                i ->
-            if (size2 != other.data[i].size)
-                error("Matrix has incorrect size.")
-            other.data[i].copyOf()
-        }
+    operator fun get(i: Int, j: Int): Double {
+        if (i >= matrix.size) throw ArrayIndexOutOfBoundsException("Matrix index out of bounds. Index i is $i and size is ${matrix.size}")
+        if (j >= matrix[0].size) throw ArrayIndexOutOfBoundsException("Matrix index out of bounds. Index j is $j and size is ${matrix[0].size}")
+        return matrix[i][j]
     }
 
-    fun getSize(): Pair<Int, Int> {
-        return Pair(size1, size2)
+    operator fun set(i: Int, j: Int, value: Double) {
+        if (i >= matrix.size) throw ArrayIndexOutOfBoundsException("Matrix index out of bounds. Index i is $i and size is ${matrix.size}")
+        if (j >= matrix[0].size) throw ArrayIndexOutOfBoundsException("Matrix index out of bounds. Index j is $j and size is ${matrix[0].size}")
+        matrix[i][j] = value
     }
 
-    private fun operationMatrix(operator: Operations, other: Matrix): Matrix {
-        if (getSize() != other.getSize())
-            error("Can't operate with matrices of different sizes.")
+    fun getDimensions(): Pair<Int, Int> = Pair(matrix.size, matrix[0].size)
 
-        val resultMatrix = Matrix(data)
-        for (i in data.indices) {
-            for (j in data[i].indices) {
-                when (operator) {
-                    Operations.ADD -> resultMatrix[i, j] += other[i, j]
-                    Operations.MINUS -> resultMatrix[i, j] -= other[i, j]
-                    else -> error("operationMatrix() hasnt the options of * and /")
-                }
-            }
-        }
-
-        return resultMatrix
-    }
-
-    private fun operationScalar(operator: Operations, scalar: Int): Matrix {
-        val resultMatrix = Matrix(data)
-        for (i in data.indices) {
-            for (j in data[i].indices) {
-                when (operator) {
-                    Operations.ADD -> resultMatrix[i, j] += scalar
-                    Operations.MINUS -> resultMatrix[i, j] -= scalar
-                    Operations.MULTIPLY -> resultMatrix[i, j] *= scalar
-                    Operations.DIVIDE -> resultMatrix[i, j] /= scalar
-                }
-            }
-        }
-        return resultMatrix
-    }
-
+    //matrices (+, +=, -, -=, *, *=)
     operator fun plus(other: Matrix): Matrix {
-        return operationMatrix(Operations.ADD, other)
+        //also works as plusAssign
+        if (matrix.size != other.matrix.size || matrix[0].size != other.matrix[0].size) throw IllegalArgumentException("Dimensions are different")
+        val newMatrix = Matrix(Array(matrix.size) { Array(matrix[0].size) { 0.0 } })
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                newMatrix[i, j] = this[i, j] + other[i, j]
+        return newMatrix
     }
 
     operator fun plusAssign(other: Matrix) {
-        setMatrix(this + other)
-    }
-
-    operator fun plus(scalar: Int): Matrix {
-        return operationScalar(Operations.ADD, scalar)
-    }
-
-    operator fun plusAssign(scalar: Int) {
-        setMatrix(this + scalar)
-    }
-
-    operator fun times(scalar: Int): Matrix {
-        return operationScalar(Operations.MULTIPLY, scalar)
-    }
-
-    operator fun times(other: Matrix): Matrix {
-        // N x M ; M x K
-        if (size2 != other.size1)
-            error("Can't time matrices because of their size.")
-        val resultMatrix = Matrix(Array(size1) {Array(other.size2) { 0 }})
-
-        for (n in data.indices)
-            for (k in other.data[n].indices)
-                for (m in other.data.indices)
-                    resultMatrix[n, k] = this[n, m] * other[m, k]
-
-        return resultMatrix
-    }
-
-    operator fun timesAssign(scalar: Int) {
-        setMatrix(this * scalar)
-    }
-
-    operator fun timesAssign(other: Matrix) {
-        setMatrix(this * other)
-    }
-
-    operator fun div(scalar: Int): Matrix {
-        return operationScalar(Operations.DIVIDE, scalar)
-    }
-
-    operator fun divAssign(scalar: Int) {
-        setMatrix(this / scalar)
-    }
-
-    operator fun minus(scalar: Int): Matrix {
-        return operationScalar(Operations.MINUS, scalar)
-    }
-
-    operator fun minusAssign(scalar: Int) {
-        setMatrix(this - scalar)
+        //also works as plusAssign
+        if (matrix.size != other.matrix.size || matrix[0].size != other.matrix[0].size) throw IllegalArgumentException("Dimensions are different")
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                this[i, j] += other[i, j]
     }
 
     operator fun minus(other: Matrix): Matrix {
-        return operationMatrix(Operations.MINUS, other)
+        if (matrix.size != other.matrix.size || matrix[0].size != other.matrix[0].size) throw IllegalArgumentException("Dimensions are different")
+        val newMatrix = Matrix(Array(matrix.size) { Array(matrix[0].size) { 0.0 } })
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                newMatrix[i, j] = this[i, j] - other[i, j]
+        return newMatrix
     }
 
     operator fun minusAssign(other: Matrix) {
-        setMatrix(this - other)
+        //also works as plusAssign
+        if (matrix.size != other.matrix.size || matrix[0].size != other.matrix[0].size) throw IllegalArgumentException("Dimensions are different")
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                this[i, j] -= other[i, j]
     }
 
-    operator fun set(i: Int, j: Int, value: Int) {
-        if (i < 0 || j < 0 || i >= size1 || j >= size2)
-            error("Set's index are out of bounds.")
-        data[i][j] = value
+    operator fun times(other: Matrix): Matrix {
+        return multiply(other)
     }
 
-    operator fun get(i: Int, j: Int): Int {
-        if (i < 0 || j < 0 || i >= size1 || j >= size2)
-            error("Set's index are out of bounds.")
-        return data[i][j]
+    operator fun timesAssign(other: Matrix) {
+        //creating new matrix in case user wants to multiply as A *= A
+        matrix = multiply(other).matrix
     }
+
+    private fun multiply(other: Matrix): Matrix {
+        //to multiply dimensions should be NxM and MxK
+        if (matrix[0].size != other.matrix.size) throw IllegalArgumentException("Dimensions are different")
+        val newMatrix = Matrix(Array(matrix.size) { Array(other.matrix[0].size) { 0.0 } })
+
+        for (i in matrix.indices)
+            for (j in other.matrix[i].indices)
+                for (k in other.matrix.indices)
+                    newMatrix[i, j] += this[i, k] * other[k, j]
+        return newMatrix
+    }
+
+    //working with scalars (*, *=, /, /=)
+    operator fun times(scalar: Double): Matrix {
+        val newMatrix = Matrix(Array(matrix.size) { Array(matrix[0].size) { 0.0 } })
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                newMatrix[i, j] = this[i, j] * scalar
+        return newMatrix
+    }
+
+    operator fun timesAssign(scalar: Double) {
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                this[i, j] *= scalar
+    }
+
+    operator fun div(scalar: Double): Matrix {
+        val newMatrix = Matrix(Array(matrix.size) { Array(matrix[0].size) { 0.0 } })
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                newMatrix[i, j] = this[i, j] / scalar
+        return newMatrix
+    }
+
+    operator fun divAssign(scalar: Double) {
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                this[i, j] /= scalar
+    }
+
     operator fun unaryMinus(): Matrix {
-        return operationScalar(Operations.MULTIPLY, -1)
+        val newMatrix = Matrix(Array(matrix.size) { Array(matrix[0].size) { 0.0 } })
+        for (i in matrix.indices)
+            for (j in matrix[i].indices)
+                newMatrix[i, j] = -this[i, j]
+        return newMatrix
     }
 
-    operator fun unaryPlus(): Matrix {
-        return this
+    operator fun unaryPlus(): Matrix = this
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other !is Matrix || other.getDimensions() != this.getDimensions()) return false
+
+        return matrix.contentDeepEquals(other.matrix)
     }
 
     override fun toString(): String {
-        val resultString = StringBuilder()
-        for (i in data.indices) {
-            for (j in data[i].indices) {
-                resultString.append(this[i, j])
-                if (j != size2 - 1)
-                    resultString.append(" ")
+        val outStr = StringBuilder()
+        for (i in matrix.indices) {
+            for (j in matrix[i].indices) {
+                outStr.append(this[i, j])
+                outStr.append(" ")
             }
-            resultString.append("\n")
+            outStr.append(System.lineSeparator())
         }
-        return resultString.toString()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if ( other !is Matrix || other.getSize() != getSize())
-            return false
-        println("CORRECT EQUALS")
-        return data.contentDeepEquals(other.data)
+        return outStr.toString()
     }
 
     override fun hashCode(): Int {
-        var result = data.contentDeepHashCode()
-        result = 31 * result + size1
-        result = 31 * result + size2
-        return result
+        //automatically generated so there's no warning
+        return matrix.contentDeepHashCode()
     }
+
 }
