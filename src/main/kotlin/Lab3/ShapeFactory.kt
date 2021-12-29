@@ -1,4 +1,3 @@
-
 import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.math.sqrt
@@ -14,23 +13,19 @@ interface ShapeFactory {
 
     fun createRandomCircle(): Circle
 
-    fun createRandomSquare(): Square;
-    fun createRandomRectangle(): Rectangle;
-    fun createRandomTriangle(): Triangle;
+    fun createRandomSquare(): Square
+    fun createRandomRectangle(): Rectangle
+    fun createRandomTriangle(): Triangle
 
-    fun createRandomShape(): Shape;
+    fun createRandomShape(): Shape
 }
 
 // The square of randomMax can reach out of max_value.
-class ShapeFactoryImpl(_randomMax: Double = sqrt(Double.MAX_VALUE) - 1): ShapeFactory {
-
-    private val randomMax: Double
+class ShapeFactoryImpl(private val randomMax: Double = sqrt(Double.MAX_VALUE) - 1) : ShapeFactory {
 
     init {
-        if (_randomMax <= 0 || _randomMax > sqrt(Double.MAX_VALUE) - 1)
+        if (randomMax <= 0 || randomMax > sqrt(Double.MAX_VALUE) - 1)
             error("Random")
-
-        randomMax = _randomMax
     }
 
     override fun createCircle(radius: Double): Circle {
@@ -70,7 +65,7 @@ class ShapeFactoryImpl(_randomMax: Double = sqrt(Double.MAX_VALUE) - 1): ShapeFa
     }
 
     override fun createRandomShape(): Shape {
-        return when(Random.nextInt(1, 4)) {
+        return when (Random.nextInt(1, 4)) {
             1 -> createRandomCircle()
             2 -> createRandomSquare()
             3 -> createRandomRectangle()

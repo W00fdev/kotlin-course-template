@@ -1,105 +1,108 @@
-
 import kotlin.math.sqrt
 
 interface Shape {
     fun calcPerimeter(): Double
     fun calcArea(): Double
+
+    override fun toString(): String
 }
 
 class Circle(
-    _radius: Double
+    val radius: Double
 ) : Shape {
-    private val radius : Double
 
     init {
-        if (_radius <= 0)
+        if (radius <= 0)
             error("Wrong radius entered (r > 0).")
-
-        radius = _radius
     }
 
-    override fun calcPerimeter() : Double {
+    override fun calcPerimeter(): Double {
         return radius * 2 * Math.PI
     }
 
     override fun calcArea(): Double {
         return Math.PI * radius * radius
     }
+
+    override fun toString(): String {
+        return "Circle(" + "%.3f".format(radius) + ") [P=%.2f]".format(calcPerimeter()) +
+                "[S=%.2f]".format(calcArea())
+    }
 }
 
 class Square(
-    _side: Double
+    val side: Double
 ) : Shape {
-    private val side : Double
-
     init {
-        if (_side <= 0)
+        if (side <= 0)
             error("Wrong side entered (side >= 0")
-
-        side = _side
     }
 
-    override fun calcPerimeter() : Double {
+    override fun calcPerimeter(): Double {
         return side * 4
     }
 
     override fun calcArea(): Double {
         return side * side
     }
+
+    override fun toString(): String {
+        return "Square(" + "%.3f".format(side) + ") [P=%.2f]".format(calcPerimeter()) +
+                "[S=%.2f]".format(calcArea())
+    }
 }
 
 class Rectangle(
-    _sideA: Double,
-    _sideB: Double
+    val sideA: Double,
+    val sideB: Double
 ) : Shape {
 
-    private val sideA: Double
-    private val sideB: Double
-
-    init{
-        if (_sideA <= 0 || _sideB <= 0)
+    init {
+        if (sideA <= 0 || sideB <= 0)
             error("Wrong side entered (side >= 0).")
-
-        sideA = _sideA
-        sideB = _sideB
     }
 
-    override fun calcPerimeter() : Double {
+    override fun calcPerimeter(): Double {
         return sideA * 2 + sideB * 2
     }
 
     override fun calcArea(): Double {
         return sideA * sideB
     }
+
+    override fun toString(): String {
+        return "Rectangle(" + "%.3f".format(sideA) + ", " +
+                "%.3f".format(sideB) + ") [P=%.2f]".format(calcPerimeter()) +
+                "[S=%.2f]".format(calcArea())
+    }
 }
-class Triangle (
-     _sideA: Double,
-     _sideB: Double,
-     _sideC: Double
+
+class Triangle(
+    val sideA: Double,
+    val sideB: Double,
+    val sideC: Double
 ) : Shape {
 
-    private val sideA: Double
-    private val sideB: Double
-    private val sideC: Double
-
     init {
-        if (_sideA <= 0 || _sideB <= 0 || _sideC <= 0)
+        if (sideA <= 0 || sideB <= 0 || sideC <= 0)
             error("Wrong side entered (side >= 0).")
 
-        if (_sideA >= _sideB + _sideC || _sideB >= _sideA + _sideC || _sideC >= _sideA + _sideB)
+        if (sideA >= sideB + sideC || sideB >= sideA + sideC || sideC >= sideA + sideB)
             error("Wrong values of sides. They must be: a + b < c")
-
-        sideA = _sideA
-        sideB = _sideB
-        sideC = _sideC
     }
 
-    override fun calcPerimeter() : Double {
+    override fun calcPerimeter(): Double {
         return sideA + sideB + sideC
     }
 
     override fun calcArea(): Double {
         val halfPerimeter = calcPerimeter() / 2
         return sqrt(halfPerimeter * (halfPerimeter - sideA) * (halfPerimeter - sideB) * (halfPerimeter - sideC))
+    }
+
+    override fun toString(): String {
+        return "Triangle(" + "%.3f".format(sideA) + ", " +
+                "%.3f".format(sideB) + ", " + "%.3f".format(sideC) +
+                ") [P=%.2f]".format(calcPerimeter()) + "[S=%.2f]".format(calcArea())
     }
 }
