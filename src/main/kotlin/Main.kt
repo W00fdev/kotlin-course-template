@@ -1,4 +1,37 @@
+import java.time.Year
+
 fun main() {
+
+    // LAB 2
+    run {
+        println("LAB2 ++++++++++++++++")
+
+        val rpn1 = RPNManager("50+30")
+        rpn1.parseRPN()
+        println("50+30")
+        println(rpn1.outputExpressionRPN)
+        println(rpn1.computeRPN())
+
+        println()
+
+        val rpn2 = RPNManager("3 + 4 * 2 / (1 - 5)^2")
+        rpn2.parseRPN()
+        println("3 + 4 * 2 / (1 - 5)^2")
+        println(rpn2.outputExpressionRPN)
+        println(rpn2.computeRPN())
+
+        println()
+
+        val rpn3 = RPNManager("5 + (3 * (-3 * 10) / 3) ^ 2")
+        rpn3.parseRPN()
+        println("5 + (3 * (-3 * 10) / 3) ^ 2")
+        println(rpn3.outputExpressionRPN)
+        println(rpn3.computeRPN())
+
+        println("LAB2 END --------------")
+    }
+
+    println()
 
     // LAB 3
     run{
@@ -54,6 +87,7 @@ fun main() {
         println("LAB3 END --------------")
     }
 
+    println()
 
     // LAB 4
     run{
@@ -95,4 +129,120 @@ fun main() {
         println("LAB4 END --------------")
     }
 
+    println()
+
+    // LAB 5
+    run{
+        println("LAB5 ++++++++++++++++")
+
+        val authorList1 = listOf(
+            Author("Dmitry Kulikov"),
+            Author("Alexander Mikhaylov")
+        )
+
+        val authorList2 = listOf(
+            Author("Lev Tolstoy")
+        )
+
+        val bookList = listOf(
+            Book("Lab3", authorList1, Genre.FAIRYTAIL, Year.of(2021)),
+            Book("Lab2", authorList1, Genre.FANTASY, Year.of(2021)),
+            Book("The war and the peace", authorList2, Genre.ROMANCE, Year.of(1956)),
+        )
+
+        val library = Library()
+
+        bookList.forEach { library.addBook(it) }
+
+        println("All books list: ${library.getAllBooks()}")
+        library.setBookStatus(bookList[1], Status.ComingSoon)
+
+        println()
+
+        println("All books' statuses: ")
+        library.getAllBookStatuses().forEach { println("${it.key.name} on ${it.value}") }
+
+        println()
+
+        println("${library.findBooks("Lab2")}")
+        library.setBookStatus(library.findBooks("Lab2")[0], Status.Available)
+
+        val newUser = User("Senior Programmer")
+        library.registerUser(newUser)
+        library.takeBook(newUser, bookList[1])
+        println()
+
+        println("All books' statuses: ")
+        library.getAllBookStatuses().forEach { println("${it.key.name} is ${it.value}") }
+        println()
+
+        println("Books stored by Senior Programmer number: ${newUser.books}")
+
+        println("Available books:\n ${library.getAllAvailableBooks()}")
+        library.returnBook(bookList[1])
+        println()
+
+        println("Books stored by Senior Programmer number: ${newUser.books}")
+
+
+        println("Available books:\n ${library.getAllAvailableBooks()}")
+
+        println("LAB5 END --------------")
+    }
+
+    // LAB 6
+    run{
+        println("LAB6 ++++++++++++++++")
+
+        val shapeFactory = ShapeFactoryImpl(10.0)
+        val shapeCollector = ShapeCollector<Shape>()
+
+        val circle1: Circle = shapeFactory.createRandomCircle()
+        val circle2: Circle = shapeFactory.createCircle(5.0)
+
+        val square1: Square = shapeFactory.createRandomSquare()
+        val square2: Square = shapeFactory.createSquare(5.0)
+
+        val rectangle1: Rectangle = shapeFactory.createRandomRectangle()
+        val rectangle2: Rectangle = shapeFactory.createRectangle(5.0, 10.0)
+
+        val triangle1: Triangle = shapeFactory.createRandomTriangle()
+        val triangle2: Triangle = shapeFactory.createTriangle(3.0, 4.0, 5.0)
+
+        val shapesRandom: List<Shape> = listOf(circle1, square1, rectangle1, triangle1)
+
+        shapeCollector.add(circle2)
+        shapeCollector.add(square2)
+        shapeCollector.add(rectangle2)
+        shapeCollector.add(triangle2)
+
+        println("Shape collector all:\n\t${shapeCollector.getAll()}")
+        println("Shape collector sorted area:\n\t${shapeCollector.getAllSorted(ShapeComparators.compareArea())}")
+        println("Shape collector sorted perimeter descending:\n\t" +
+                "${shapeCollector.getAllSorted(ShapeComparators.comparePerimeterDescending())}")
+
+        shapeCollector.addAll(shapesRandom)
+
+        println("Shape collector sorted area descending:\n\t${shapeCollector.getAllSorted
+            (ShapeComparators.compareAreaDescending())}")
+        println("Shape collector sorted perimeter:\n\t" +
+                "${shapeCollector.getAllSorted(ShapeComparators.comparePerimeter())}")
+
+        println()
+
+        val shapeCollectorCircles = ShapeCollector<Circle>()
+
+        shapeCollectorCircles.add(Circle(1.0))
+        shapeCollectorCircles.add(shapeFactory.createRandomCircle())
+        shapeCollectorCircles.add(shapeFactory.createRandomCircle())
+        shapeCollectorCircles.add(shapeFactory.createRandomCircle())
+
+        println("Shape collector circles all:\n\t${shapeCollectorCircles.getAll()}")
+        println("All circles sorted by radius:\n\t${shapeCollectorCircles.getAllSorted
+            (ShapeComparators.compareRadius())}")
+        println("All circles sorted by radius descending:\n\t${shapeCollectorCircles.getAllSorted
+            (ShapeComparators.compareRadiusDescending())}")
+
+        println("LAB6 END --------------")
+    }
 }
