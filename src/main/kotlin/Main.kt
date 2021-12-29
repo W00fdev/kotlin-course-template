@@ -2,6 +2,21 @@ import java.time.Year
 
 fun main() {
 
+    // LAB 1
+    run {
+        println("LAB1 ++++++++++++++++")
+
+        val text = "abcd abcd abc abc ab ab ab a a a"
+        println("Text origin:\n $text")
+        println("Text with align left(9):\n ${changeAlignText(text, 9, Alignment.LEFT)}")
+        println("Text with align center(10):\n ${changeAlignText(text, 10, Alignment.CENTER)}")
+        println("Text with align right(5):\n ${changeAlignText(text, 5, Alignment.RIGHT)}")
+
+        println("LAB1 END --------------")
+    }
+
+    println()
+
     // LAB 2
     run {
         println("LAB2 ++++++++++++++++")
@@ -190,6 +205,8 @@ fun main() {
         println("LAB5 END --------------")
     }
 
+    println()
+
     // LAB 6
     run{
         println("LAB6 ++++++++++++++++")
@@ -244,5 +261,38 @@ fun main() {
             (ShapeComparators.compareRadiusDescending())}")
 
         println("LAB6 END --------------")
+    }
+
+    println()
+
+    run {
+        println("LAB7 ++++++++++++++++")
+        val inPath = "D:\\in.json"
+        val outPath = "D:\\out.json"
+        val fileManager = FileManager(inPath, outPath)
+        val managerJSON = JSONManager()
+        val shapesList = mutableListOf<Shape>()
+        shapesList.addAll(managerJSON.decodeJSON<MutableList<Shape>>(fileManager.readFromFile()))
+
+        println("Original shapes list:\n$shapesList")
+
+        shapesList.addAll(listOf(
+                Circle(42.0),
+                Triangle(3.0, 4.0, 5.0),
+                Rectangle(1.0, 2.0),
+                Square(3.0)
+            )
+        )
+
+        println("Changed shapes list:\n$shapesList")
+
+        fileManager.writeOnFile(managerJSON.encodeJSON(shapesList))
+
+        println("In JSON:\n${fileManager.readFromFile()}")
+
+        val fileManagerDebug = FileManager(outPath, inPath)
+        println("Out JSON:\n${fileManagerDebug.readFromFile()}")
+
+        println("LAB7 END --------------")
     }
 }
